@@ -65,7 +65,7 @@ for k=1:numc,
     idx = find(Indicator(:,col_order(k)));
     v_Omega = values(idx,col_order(k));
     U_Omega = U(idx,:);    
-
+    
     
     % Predict the best approximation of v_Omega by u_Omega.  
     % That is, find weights to minimize ||U_Omega*weights-v_Omega||^2

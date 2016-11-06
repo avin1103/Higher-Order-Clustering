@@ -35,8 +35,10 @@ cluster=cluster'; % This is my uniform random sampling
 n = 5; % Number of points to build model
 error = 1000;
 T =100; % number of column of P matrix (1<= T <= Nc)
-while error>=1000
-    for t = 1:1
+numc = 50; % Number of column in U matrix
+niter=100;
+while niter >=0
+    for t = 1:T
         r =randi([1,K],1,1);
         i = cluster==r;
         I = find(i==1);
@@ -47,8 +49,7 @@ while error>=1000
         [cx,cy,r,error] = circFit(points); % This is the circulur fit.
         pj=zeros(N,1);
         for iter = 1:N % Calculating Pj vector here
-            temp=sum(I==iter)
-            
+            temp=sum(I==iter);
             if temp==0
                 x = data(iter,1);
                 y = data(iter,2);
@@ -59,16 +60,27 @@ while error>=1000
                 pj(iter) = exp(-err/sigma);
             end
         end
-        
         clearvars x y X d sigma err;
-        
-        
-        
-        
-        
-        error=error-1;
-    
+        U = orth(randn(N,numc)); % Initialisation of U matrix
+        weights = U\pj;
+        residual = pj-U*weights;
+        norm_weights = norm(weights);
+        norm_residual = norm(residual);
+        sG = 2*norm_residual*norm_weights;
+        step_size=0.1;
+        t = step_size*sG;
+        if t<pi/2, % drop big steps  
+            q = U*w;
+            alpha = (cos(t)-1)/(norm(q)) ;
+            beta = sin(t)/sG;
+            
+            U = U + beta*residual*weights' + alpha*q*weights';
+        end 
     end
+    prev_cluster = cluster;
+    cluster = kmeans(U,K);
+    error = abs(sum(abs(cluster-prev_cluster)))
+    niter = niter-1
 end
 
 
