@@ -20,7 +20,6 @@ for i=1:num_circle
   hold on;
 end
 
-
 clearvars x y temp cx cy color c angles r s i;
 
 data =data'; % This is my data matrix
@@ -30,29 +29,47 @@ data =data'; % This is my data matrix
 %N = m*num_points;
 N=500;
 K = 5; % Number of clusters
-cluster = zeros(N,K); % Cluster matrix
-
+cluster = randi([1 K],1,N);
+cluster=cluster'; % This is my uniform random sampling
 %% While loop 
 n = 5; % Number of points to build model
 error = 1000;
 T =100; % number of column of P matrix (1<= T <= Nc)
-while error>0.1
-    for t = 1:T
+while error>=1000
+    for t = 1:1
         r =randi([1,K],1,1);
-        
+        i = cluster==r;
+        I = find(i==1);
+        I=I(1:n); % Choosing first n points from 
+        % Make a model on these n points
+        points = data(I,:); % n points from data which will make my model
+        points = points';
+        [cx,cy,r,error] = circFit(points); % This is the circulur fit.
+        pj=zeros(N,1);
+        for iter = 1:N % Calculating Pj vector here
+            temp=sum(I==iter)
             
-    
+            if temp==0
+                x = data(iter,1);
+                y = data(iter,2);
+                X = [x,y;cx,cy];
+                d = pdist(X,'euclidean');
+                err = abs(d-r); 
+                sigma = 10;
+                pj(iter) = exp(-err/sigma);
+            end
+        end
         
+        clearvars x y X d sigma err;
+        
+        
+        
+        
+        
+        error=error-1;
+    
     end
 end
-
-
-
-
-
-
-
-
 
 
 
