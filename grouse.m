@@ -33,15 +33,14 @@ function [U,R,err_reg] = grouse(I,J,S,numr,numc,maxrank,step_size,maxCycles,Uini
 %
 
 % Form some sparse matrices for easier matlab indexing
-values = sparse(I,J,S,numr,numc);
-Indicator = sparse(I,J,1,numr,numc);
+%values = sparse(I,J,S,numr,numc);
+%Indicator = sparse(I,J,1,numr,numc);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %Main Algorithm
 %
-
-if (nargin<9)
+if (nargin<8)
     % initialize U to a random r-dimensional subspace 
     U = orth(randn(numr,maxrank)); 
 else
