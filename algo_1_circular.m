@@ -1,6 +1,6 @@
 %% Load Input
 %Creating Data
-num_circle=10; %number of circles 
+num_circle=4; %number of circles 
 num_points = 100; %number of points for in given circle
 s=5;% number of segnments that we will initially cluster
 r=50; %radius is fixed for all circles, my be changed
@@ -21,7 +21,10 @@ for i=1:num_circle
   hold on;
 end
 data=data';
-%clearvars x y temp cx cy color c angles r s i;
+%% Load Image
+img = double(imread('kinect_depth_image.jpg'));
+img = reshape(img,size(img,1)*size(img,2),3);
+
 %%
 N = num_circle*num_points;
 n = 4; % Number of points to build model
@@ -40,7 +43,7 @@ end
 
 %% Here comes the part of cluster initialisation
 % Build P matrix.
-num_column = 100;
+num_column = 10; % Here we can see that number of columns are very small in comparision ti Nc
 P=[];
 pj=zeros(N,1);
 for it=1:num_column
@@ -78,7 +81,7 @@ end
 
 %% While loop 
 
-T=100; % number of column of P matrix (1<= T <= Nc)
+T=200; % number of column of P matrix (1<= T <= Nc)
 numc = 5; % Number of column in U matrix
 niter=10;
 U = orth(randn(N,numc)); % Initialisation of U matrix
@@ -94,12 +97,9 @@ while (err_U>0.01*N*numc && err_1>5 )% && err_1<N-5)
         %I=I(1:n);
         points = data(I,:); % n points from data which will make my model
         points = points';
-        %[cx,cy,r,error] = circFit(points); % This is the circular fit.
         [cx, cy, rad, error] = CIRC(points(1,:)',points(2,:)');
         pj=zeros(N,1);
         for iter = 1:N % Calculating Pj vector here
-         %iter=1;
-        % while(iter<=N)
             temp=sum(I==iter);
             if temp==0
                 x = data(iter,1);
@@ -111,8 +111,8 @@ while (err_U>0.01*N*numc && err_1>5 )% && err_1<N-5)
                 lembda = 10;
                 pow=2;
                 pj(iter) = exp(-lembda*(err/sigma)^pow);
+               % iter
             end
-            %iter=iter+5;
         end
         
         weights = U\pj;
@@ -132,23 +132,15 @@ while (err_U>0.01*N*numc && err_1>5 )% && err_1<N-5)
             U = U + beta*residual*weights' + alpha*q*weights';
         end 
     end
-    prev_cluster=cluster;
     TF = isnan(U);
     if(sum(sum(TF))==N*numc)
         break
     else
         cluster = kmeans(U,K);
     end
-    prev_err_1 = err_1;
-    err_1 = sum(abs(prev_cluster-cluster));
-   % if(abs(prev_err_1-err_1)<5*num_circle)
-        %err_1=abs(prev_err_1-err_1);
-     %   err_1=4;
-    %end
+   
     err_U = sum(sum(abs(prev_U-U)))
     niter = niter-1;
-    
-    clearvars x y X d sigma err i I cx cy r prev_cluster;
 end
 
 
@@ -160,6 +152,6 @@ figure
         scatter(points(1,:),points(2,:),'MarkerFaceColor',color);title 'My Program Classification';
         hold on
     end
-clearvars i I jhg norm_q norm_residual norm_weights norm_circle;
-clear ;
-%clc;
+clear;
+clc;
+
