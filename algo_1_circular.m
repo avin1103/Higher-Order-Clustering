@@ -21,10 +21,6 @@ for i=1:num_circle
   hold on;
 end
 data=data';
-%% Load Image
-img = double(imread('kinect_depth_image.jpg'));
-img = reshape(img,size(img,1)*size(img,2),3);
-
 %%
 N = num_circle*num_points;
 n = 4; % Number of points to build model
@@ -152,6 +148,6 @@ figure
         scatter(points(1,:),points(2,:),'MarkerFaceColor',color);title 'My Program Classification';
         hold on
     end
-clear;
-clc;
+%clear;
+%clc;
 
