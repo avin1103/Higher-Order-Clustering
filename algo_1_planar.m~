@@ -9,7 +9,7 @@ clear;
 clc;
 
 img = double(imread('wall_person.jpg'));
-img = imresize(img,[75,100]);
+img = imresize(img,[100,150]);
 rows = size(img,1);
 cols=size(img,2);
 
@@ -20,7 +20,7 @@ data = reshape(img,size(img,1)*size(img,2),3);
 clear distance depth loc ;
 %%
 N = rows*cols;
-n = 4; % Number of points to build model
+n = 5; % Number of points to build model
 K = 4; % Define K
 
 cluster = kmeans(data,K);
@@ -46,7 +46,7 @@ for it=1:num_column
             temp2 = poi*nor;
             err = (temp-temp2);
             sigma = 100;
-            lembda = 100;
+            lembda = 10;
             pow=2;
             pj(iter) = exp(-lembda*(err/sigma)^pow);
         end
@@ -88,7 +88,7 @@ while ( err_U>10)% && err_1<N-5)
                 temp = X*nor;
                 temp2 = poi*nor;
                 err = (temp-temp2); 
-                sigma = 1000;
+                sigma = 10;
                 lembda = 100;
                 pow=2;
                 pj(iter) = exp(-lembda*(err/sigma)^pow);
@@ -126,7 +126,7 @@ end
 
 figure
 pixel_labels = reshape(cluster,rows,cols);
-imshow(pixel_labels,[]), title('Image Labeled by My program');
+imshow(pixel_labels,[]), title('Image Labeled by My program...');
 %clear;
 %clc;
 

@@ -1,3 +1,6 @@
+clear;
+clc;
+
 %% Load Input
 %Creating Data
 num_circle=4; %number of circles 
