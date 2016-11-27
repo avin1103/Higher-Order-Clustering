@@ -1,26 +1,14 @@
 %% Load Image
-%img = double(imread('kinect_depth_image.jpg'));
-%loc = load('apple_1_1_1_loc.txt'); 
-%depth = imread('apple_1_1_1_depth.png'); 
-%[img distance] = depthToCloud(depth,loc);
-%img = imresize(img,[75,125]);
-%img = inpaint_nans(img);
 clear;
 clc;
-
 img = double(imread('wall_person.jpg'));
-img = imresize(img,[75,100]);
+img = imresize(img,[100,125]);
 rows = size(img,1);
 cols=size(img,2);
-
 data = reshape(img,size(img,1)*size(img,2),3);
-%data = inpaint_nans(data);
-%data(isnan(data))=0;
-%imshow(img)
-clear distance depth loc ;
-%%
+clear distance depth loc;
 N = rows*cols;
-n = 4; % Number of points to build model
+n = 5; % Number of points to build model
 K = 4; % Define K
 
 cluster = kmeans(data,K);
@@ -28,8 +16,8 @@ figure
 pixel_labels = reshape(cluster,rows,cols);
 imshow(pixel_labels,[]), title('image labeled by k-means');
 
-
-%% Here comes the part of cluster initialisation
+%%
+% Here comes the part of cluster initialisation
 % Build P matrix.
 num_column = 10; % Here we can see that number of columns are very small in comparision ti Nc
 P=[];
@@ -63,13 +51,12 @@ imshow(pixel_labels,[]), title('image labeled by higher order k-means');
 %% While loop 
 
 T=1000; % number of column of P matrix (1<= T <= Nc)
-numc = 4; % Number of column in U matrix
+numc = 5; % Number of column in U matrix
 U = orth(randn(N,numc)); % Initialisation of U matrix
 %err_1=100;
 err_U=N*numc;
-
 anku=1;
-while ( err_U>10)% && err_1<N-5)
+while ( err_U>5)
     prev_U = U;
     for t1 = 1:T
         
@@ -88,7 +75,7 @@ while ( err_U>10)% && err_1<N-5)
                 temp = X*nor;
                 temp2 = poi*nor;
                 err = (temp-temp2); 
-                sigma = 1000;
+                sigma = 100;
                 lembda = 100;
                 pow=2;
                 pj(iter) = exp(-lembda*(err/sigma)^pow);
@@ -103,7 +90,7 @@ while ( err_U>10)% && err_1<N-5)
         norm_residual = norm(residual);
         norm_q = norm(q);
         sG = norm_residual*norm_q;
-        step_size=0.01/anku;
+        step_size=0.0001/anku;
         
         t = step_size*sG;
         %if t<pi/2 % drop big steps  
@@ -122,11 +109,11 @@ while ( err_U>10)% && err_1<N-5)
     err_U = sum(sum(abs(prev_U-U)))
     anku=anku*5;
 end
-%%
+%
 
 figure
 pixel_labels = reshape(cluster,rows,cols);
 imshow(pixel_labels,[]), title('Image Labeled by My program');
-%clear;
+clear;
 %clc;
 

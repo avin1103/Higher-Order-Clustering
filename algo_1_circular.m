@@ -3,7 +3,7 @@ clc;
 
 %% Load Input
 %Creating Data
-num_circle=4; %number of circles 
+num_circle=3; %number of circles 
 num_points = 100; %number of points for in given circle
 s=5;% number of segnments that we will initially cluster
 r=50; %radius is fixed for all circles, my be changed

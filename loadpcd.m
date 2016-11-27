@@ -89,10 +89,11 @@ function points = loadpcd(fname)
         fprintf('  %s; %s\n', TYPE, num2str(sizes));
     end
     
+    %{
     if any(count > 1)
         error('can only handle 1 element per dimension');
     end
-    
+    %}
     switch mode
         case 'ascii'
             format = '';
