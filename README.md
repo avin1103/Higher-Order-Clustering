@@ -1,2 +1,3 @@
 # Higher-Order-Clustering
-best project ever at IIT Delhi
+
+Project, Computer Vision Course(COL-780)
